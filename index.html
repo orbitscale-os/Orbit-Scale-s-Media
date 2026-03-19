@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbit Scale — Digital Architects for the Visionary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0A0A0A;
+      --bg2: #111111;
+      --bg3: #191919;
+      --bg4: #222222;
+      --text: #F0EDE6;
+      --muted: #6E6E6A;
+      --sub: #9A9A94;
+      --gold: #C9A96E;
+      --gold2: rgba(201, 169, 110, 0.12);
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.12);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --radius-lg: 28px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(10, 10, 10, 0.88);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      transition: background 0.4s;
+    }
+    .nav.scrolled { background: rgba(10, 10, 10, 0.97); }
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      margin-bottom: 2px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 0.55rem 1.4rem;
+      border-radius: 100px;
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    .nav-btn:hover { background: var(--gold); color: #0A0A0A; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 9rem 2.5rem 5rem;
+      text-align: center;
+      position: relative;
+    }
+    .hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .hero-glow {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(201, 169, 110, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(201, 169, 110, 0.3);
+      background: rgba(201, 169, 110, 0.06);
+      color: var(--gold);
+      padding: 0.45rem 1.2rem;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .badge-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .hero-h1 {
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 7.5vw, 6.5rem);
+      font-weight: 300;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .hero-h1 em { font-style: italic; color: var(--gold); }
+    .hero-sub {
+      max-width: 500px;
+      color: var(--sub);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      font-weight: 300;
+      margin-bottom: 2.75rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .btn-p {
+      background: var(--gold);
+      color: #0A0A0A;
+      border: none;
+      padding: 0.85rem 2.25rem;
+      border-radius: 100px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    .btn-p:hover { transform: scale(1.04); }
+    .btn-g {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border2);
+      padding: 0.85rem 2.25rem;
+      border-radius: 100px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+    }
+    .btn-g:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+
+    /* ─── HERO 3D CARD ─── */
+    .hero-card-outer {
+      perspective: 1400px;
+      margin-top: 4.5rem;
+      width: 100%;
+      max-width: 860px;
+      opacity: 0;
+      animation: fadeUp 1s 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .hero-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transform: rotateX(22deg) scale(0.93);
+      transform-style: preserve-3d;
+      transition: transform 0.08s linear;
+    }
+    .card-titlebar {
+      background: var(--bg2);
+      padding: 0.9rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .dot-r { background: #FF5F57; }
+    .dot-y { background: #FFBD2E; }
+    .dot-g { background: #28C840; }
+    .titlebar-txt { margin-left: 0.75rem; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    .card-body {
+      padding: 1.75rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+    }
+    .stat {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem 1.5rem;
+    }
+    .stat-lbl { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.6rem; }
+    .stat-val { font-family: var(--serif); font-size: 2.2rem; font-weight: 300; color: var(--text); line-height: 1; }
+    .stat-val.g { color: var(--gold); }
+    .stat-chg { font-size: 0.7rem; color: #4ADE80; margin-top: 0.35rem; }
+    .bars-wrap {
+      grid-column: span 3;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.4rem;
+      height: 76px;
+    }
+    .bar {
+      flex: 1;
+      background: var(--bg4);
+      border-radius: 4px 4px 0 0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .bar:hover, .bar.active { background: var(--gold); }
+
+    /* ─── SECTION BASE ─── */
+    .sec { padding: 6rem 2.5rem; }
+    .sec-inner { max-width: 1060px; margin: 0 auto; }
+    .sec-tag { display: inline-block; color: var(--gold); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .hr-gold { width: 48px; height: 1px; background: var(--gold); margin: 1rem 0 1.25rem; }
+    .sec-h2 { font-family: var(--serif); font-size: clamp(2.2rem, 4.5vw, 3.8rem); font-weight: 300; line-height: 1.08; margin-bottom: 1.25rem; }
+    .sec-sub { color: var(--sub); font-size: 0.97rem; line-height: 1.8; max-width: 480px; font-weight: 300; }
+
+    /* ─── REVEAL ON SCROLL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+    .d4 { transition-delay: 0.4s; }
+    .d5 { transition-delay: 0.5s; }
+
+    /* ─── SERVICES ─── */
+    .svc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 3.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .svc {
+      background: var(--bg);
+      padding: 2.25rem;
+      position: relative;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.4s;
+    }
+    .svc:nth-child(3n) { border-right: none; }
+    .svc:nth-child(4), .svc:nth-child(5), .svc:nth-child(6) { border-bottom: none; }
+    .svc:hover { background: var(--bg2); }
+    .svc-num { font-family: var(--serif); font-size: 0.82rem; color: var(--gold); margin-bottom: 1.25rem; letter-spacing: 0.1em; }
+    .svc-name { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; margin-bottom: 0.6rem; }
+    .svc-desc { color: var(--muted); font-size: 0.84rem; line-height: 1.7; font-weight: 300; }
+    .svc-arrow {
+      position: absolute;
+      right: 1.75rem;
+      bottom: 1.75rem;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .svc:hover .svc-arrow { border-color: var(--gold); color: var(--gold); transform: rotate(45deg); }
+
+    /* ─── MARQUEE TESTIMONIALS ─── */
+    .marquee-sec { overflow: hidden; padding: 5rem 0; }
+    .marquee-hd { padding: 0 2.5rem; max-width: 1060px; margin: 0 auto 3rem; }
+    .marquee-track {
+      display: flex;
+      gap: 1.25rem;
+      animation: marquee 32s linear infinite;
+      width: max-content;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .tcard {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem 2rem;
+      min-width: 360px;
+      max-width: 360px;
+      flex-shrink: 0;
+    }
+    .tcstars { color: var(--gold); font-size: 0.82rem; letter-spacing: 0.12em; margin-bottom: 1.1rem; }
+    .tctext { font-family: var(--serif); font-size: 1.05rem; font-weight: 300; line-height: 1.65; color: var(--text); margin-bottom: 1.25rem; }
+    .tcauthor { display: flex; align-items: center; gap: 0.75rem; }
+    .avtr {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--gold2);
+      border: 1px solid rgba(201, 169, 110, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .aname { font-size: 0.84rem; font-weight: 500; color: var(--text); }
+    .arole { font-size: 0.74rem; color: var(--muted); }
+
+    /* ─── CONTACT ─── */
+    .contact-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-glow {
+      position: absolute;
+      bottom: -20%;
+      right: -5%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(201, 169, 110, 0.07) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .avail-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(74, 222, 128, 0.07);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      color: #4ADE80;
+      font-size: 0.7rem;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.06em;
+    }
+    .avail-dot { width: 5px; height: 5px; background: #4ADE80; border-radius: 50%; animation: pulse 2s infinite; }
+    .contact-h2 { font-family: var(--serif); font-size: clamp(1.9rem, 3.5vw, 3rem); font-weight: 300; line-height: 1.1; margin-bottom: 1rem; }
+    .contact-sub { color: var(--sub); font-size: 0.92rem; line-height: 1.8; font-weight: 300; margin-bottom: 2rem; }
+    .copt {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.35rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.3s;
+      margin-bottom: 0.9rem;
+    }
+    .copt:hover { border-color: var(--gold); background: rgba(201, 169, 110, 0.04); }
+    .copt-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ci-phone { background: rgba(74, 222, 128, 0.1); }
+    .ci-email { background: rgba(201, 169, 110, 0.1); }
+    .copt-lbl { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .copt-val { font-size: 0.88rem; font-weight: 500; margin-top: 0.1rem; }
+    .form-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.25rem;
+    }
+    .form-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 300; margin-bottom: 1.5rem; }
+    .field {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1.1rem;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.3s;
+      margin-bottom: 0.85rem;
+      display: block;
+    }
+    .field:focus { border-color: var(--gold); }
+    .field::placeholder { color: var(--muted); }
+    textarea.field { resize: none; }
+    .submit-btn {
+      width: 100%;
+      background: var(--gold);
+      color: #0A0A0A;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: all 0.3s;
+    }
+    .submit-btn:hover { opacity: 0.88; }
+    .submit-btn.success { background: #4ADE80; color: #052e16; }
+    .submit-btn.error { background: #ef4444; color: #fff; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #0D0D0D;
+      border-top: 1px solid var(--border);
+      padding: 4rem 2.5rem 2.5rem;
+      text-align: center;
+    }
+    .ft-logo { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; letter-spacing: 0.12em; color: var(--text); display: block; margin-bottom: 0.4rem; }
+    .ft-tag { color: var(--muted); font-size: 0.82rem; font-weight: 300; letter-spacing: 0.1em; margin-bottom: 2.5rem; display: block; }
+    .ft-links { display: flex; justify-content: center; gap: 2.5rem; list-style: none; margin-bottom: 3rem; }
+    .ft-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.06em; transition: color 0.3s; }
+    .ft-links a:hover { color: var(--text); }
+    .ft-hr { height: 1px; background: var(--border); margin-bottom: 2rem; }
+    .ft-bottom { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 0.76rem; letter-spacing: 0.03em; }
+
+    /* ─── KEYFRAMES ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .sec { padding: 4.5rem 1.5rem; }
+      .svc-grid { grid-template-columns: 1fr; }
+      .svc { border-right: none; }
+      .svc:nth-child(n) { border-bottom: 1px solid var(--border); }
+      .svc:last-child { border-bottom: none; }
+      .contact-box { grid-template-columns: 1fr; gap: 2.5rem; padding: 2.25rem 1.75rem; }
+      .card-body { grid-template-columns: 1fr 1fr; }
+      .bars-wrap { grid-column: span 2; }
+      .ft-bottom { flex-direction: column; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav class="nav" id="nav">
+    <a href="#home" class="nav-logo">
+      <div class="logo-dot"></div>Orbit Scale
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#testimonials">Results</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-btn">Book a Call</a>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero" id="home">
+    <div class="hero-bg"><div class="hero-glow"></div></div>
+
+    <span class="hero-badge">
+      <span class="badge-dot"></span>Limited Availability · 2026
+    </span>
+
+    <h1 class="hero-h1">We Build<br><em>Digital</em> Empires.</h1>
+
+    <p class="hero-sub">
+      Orbit Scale engineers cinematic, AI-integrated digital experiences
+      for visionary brands that refuse to be ordinary.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#contact" class="btn-p">Secure Your Slot →</a>
+      <a href="#services" class="btn-g">Explore Services</a>
+    </div>
+
+    <div class="hero-card-outer">
+      <div class="hero-card" id="hero3d">
+        <div class="card-titlebar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <span class="titlebar-txt">Orbit Scale · Client Performance Dashboard</span>
+        </div>
+        <div class="card-body">
+          <div class="stat">
+            <div class="stat-lbl">Revenue Growth</div>
+            <div class="stat-val g">+347%</div>
+            <div class="stat-chg">▲ Since Launch</div>
+          </div>
+          <div class="stat">
+            <div class="stat-lbl">Conversion Rate</div>
+            <div class="stat-val">8.2%</div>
+            <div class="stat-chg">▲ Industry avg: 2.4%</div>
+          </div>
+          <div class="stat">
+            <div class="stat-lbl">Brand Authority</div>
+            <div class="stat-val g">9.8</div>
+            <div class="stat-chg">▲ Score / 10</div>
+          </div>
+          <div class="bars-wrap" id="bars">
+            <div class="bar" style="height:35%"></div>
+            <div class="bar" style="height:50%"></div>
+            <div class="bar" style="height:42%"></div>
+            <div class="bar" style="height:62%"></div>
+            <div class="bar" style="height:55%"></div>
+            <div class="bar" style="height:68%"></div>
+            <div class="bar" style="height:72%"></div>
+            <div class="bar" style="height:85%"></div>
+            <div class="bar" style="height:78%"></div>
+            <div class="bar" style="height:91%"></div>
+            <div class="bar" style="height:96%"></div>
+            <div class="bar active" style="height:100%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SERVICES ─── -->
+  <section class="sec" id="services">
+    <div class="sec-inner">
+      <div class="reveal">
+        <span class="sec-tag">Our Engineering Suite</span>
+        <div class="hr-gold"></div>
+        <h2 class="sec-h2">Full-Spectrum<br><em style="font-style:italic;color:var(--gold)">Digital Sovereignty.</em></h2>
+        <p class="sec-sub">Every service is orchestrated to deliver one outcome: total market dominance for your brand.</p>
+      </div>
+      <div class="svc-grid reveal d2">
+        <div class="svc">
+          <div class="svc-num">01</div>
+          <div class="svc-name">Cinematic Websites</div>
+          <p class="svc-desc">Award-worthy digital experiences built with Next.js, Three.js &amp; motion design that converts visitors into believers.</p>
+          <div class="svc-arrow">→</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">02</div>
+          <div class="svc-name">AI Integration</div>
+          <p class="svc-desc">Custom LLM pipelines, intelligent automation &amp; AI-powered workflows that compound your operational advantage.</p>
+          <div class="svc-arrow">→</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">03</div>
+          <div class="svc-name">Brand Architecture</div>
+          <p class="svc-desc">Visual identity systems, motion branding &amp; strategic positioning for brands built to lead their category.</p>
+          <div class="svc-arrow">→</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">04</div>
+          <div class="svc-name">Revenue Engineering</div>
+          <p class="svc-desc">Conversion-optimised funnels, A/B architecture &amp; growth infrastructure built around your unit economics.</p>
+          <div class="svc-arrow">→</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">05</div>
+          <div class="svc-name">Digital Strategy</div>
+          <p class="svc-desc">Bespoke go-to-market blueprints fusing data intelligence, audience psychology &amp; competitive mapping.</p>
+          <div class="svc-arrow">→</div>
+        </div>
+        <div class="svc">
+          <div class="svc-num">06</div>
+          <div class="svc-name">Ongoing Partnership</div>
+          <p class="svc-desc">Retainer-based creative &amp; technical support ensuring your digital presence evolves ahead of the market.</p>
+          <div class="svc-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TESTIMONIALS ─── -->
+  <section class="marquee-sec" id="testimonials">
+    <div class="marquee-hd reveal">
+      <span class="sec-tag">Client Results</span>
+      <div class="hr-gold"></div>
+      <h2 class="sec-h2">Partners Who<br><em style="font-style:italic;color:var(--gold)">Scaled.</em></h2>
+    </div>
+    <div style="overflow:hidden;">
+      <div class="marquee-track">
+        <!-- Cards (duplicated for seamless loop) -->
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"Orbit Scale didn't just build a site; they built a revenue engine. The AI-integrated workflow saved us months of development."</p><div class="tcauthor"><div class="avtr">JV</div><div><div class="aname">Julian V.</div><div class="arole">CEO, Nexus Global</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"The cinematic aesthetic provided by Orbit Scale gave our brand the digital authority we were missing. Simply unmatched."</p><div class="tcauthor"><div class="avtr">ER</div><div><div class="aname">Elena R.</div><div class="arole">Founder, L'Avenir</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"Working with Orbit Scale was like having a world-class agency on speed dial. Our conversion rate tripled within 90 days."</p><div class="tcauthor"><div class="avtr">MK</div><div><div class="aname">Marcus K.</div><div class="arole">Founder, Apex Ventures</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"The attention to motion design and micro-interactions was extraordinary. Our audience immediately felt the premium shift."</p><div class="tcauthor"><div class="avtr">SL</div><div><div class="aname">Sophie L.</div><div class="arole">CMO, Meridian Luxury</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"From brief to launch in 6 weeks. The quality was untouchable — our investors called the site 'the best they've seen in the sector.'"</p><div class="tcauthor"><div class="avtr">TP</div><div><div class="aname">Theo P.</div><div class="arole">CEO, Parallel Capital</div></div></div></div>
+        <!-- Duplicates for infinite seamless loop -->
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"Orbit Scale didn't just build a site; they built a revenue engine. The AI-integrated workflow saved us months of development."</p><div class="tcauthor"><div class="avtr">JV</div><div><div class="aname">Julian V.</div><div class="arole">CEO, Nexus Global</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"The cinematic aesthetic provided by Orbit Scale gave our brand the digital authority we were missing. Simply unmatched."</p><div class="tcauthor"><div class="avtr">ER</div><div><div class="aname">Elena R.</div><div class="arole">Founder, L'Avenir</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"Working with Orbit Scale was like having a world-class agency on speed dial. Our conversion rate tripled within 90 days."</p><div class="tcauthor"><div class="avtr">MK</div><div><div class="aname">Marcus K.</div><div class="arole">Founder, Apex Ventures</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"The attention to motion design and micro-interactions was extraordinary. Our audience immediately felt the premium shift."</p><div class="tcauthor"><div class="avtr">SL</div><div><div class="aname">Sophie L.</div><div class="arole">CMO, Meridian Luxury</div></div></div></div>
+        <div class="tcard"><div class="tcstars">★ ★ ★ ★ ★</div><p class="tctext">"From brief to launch in 6 weeks. The quality was untouchable — our investors called the site 'the best they've seen in the sector.'"</p><div class="tcauthor"><div class="avtr">TP</div><div><div class="aname">Theo P.</div><div class="arole">CEO, Parallel Capital</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ─── -->
+  <section class="sec" id="contact">
+    <div class="sec-inner">
+      <div class="contact-box reveal">
+        <div class="contact-glow"></div>
+        <div>
+          <div class="avail-pill">
+            <div class="avail-dot"></div>Accepting New Partners · Q2 2026
+          </div>
+          <h2 class="contact-h2">Secure Your<br><em style="font-style:italic;color:var(--gold)">Creative Slot.</em></h2>
+          <p class="contact-sub">
+            We operate at limited capacity to ensure every partner receives
+            our full engineering suite. Let's discuss the trajectory of your brand.
+          </p>
+          <a href="https://wa.me/263789649885" class="copt" target="_blank" rel="noopener">
+            <div class="copt-icon ci-phone">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.6 13.55a19.79 19.79 0 01-3.07-8.67A2 2 0 012.51 3h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 10.4A16 16 0 0013.6 17l.71-.71a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+              </svg>
+            </div>
+            <div>
+              <div class="copt-lbl">Executive Liaison · WhatsApp / Call</div>
+              <div class="copt-val">+263 78 964 9885</div>
+            </div>
+          </a>
+          <a href="mailto:unknownperson01947@gmail.com" class="copt">
+            <div class="copt-icon ci-email">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div>
+              <div class="copt-lbl">Digital Briefing · Email Registry</div>
+              <div class="copt-val">unknownperson01947@gmail.com</div>
+            </div>
+          </a>
+        </div>
+        <div>
+          <div class="form-box">
+            <div class="form-title">Send a Brief</div>
+            <input class="field" type="text"  id="f-name"  placeholder="Your Name" />
+            <input class="field" type="email" id="f-email" placeholder="Email Address" />
+            <input class="field" type="text"  id="f-brand" placeholder="Company / Brand" />
+            <textarea class="field" id="f-msg" rows="4" placeholder="Describe your project vision..."></textarea>
+            <button class="submit-btn" id="sbtn" onclick="handleSubmit()">Submit Brief →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <span class="ft-logo">Orbit Scale</span>
+    <span class="ft-tag">Digital Architects for the Visionary.</span>
+    <ul class="ft-links">
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#services">The Process</a></li>
+    </ul>
+    <div class="ft-hr"></div>
+    <div class="ft-bottom">
+      <span>© 2026 Orbit Scale. All rights reserved.</span>
+      <span>Powered by Orbit Scale Intelligence.</span>
+    </div>
+  </footer>
+
+  <script>
+    // ─── NAV SCROLL EFFECT ───
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ─── HERO 3D CARD SCROLL TILT ───
+    const card = document.getElementById('hero3d');
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const vh = window.innerHeight;
+          const p = Math.min(scrollY / (vh * 0.9), 1);
+          const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+          const rx = 22 - ease * 22;
+          const sc = 0.93 + ease * 0.07;
+          if (card) card.style.transform = `rotateX(${rx}deg) scale(${sc})`;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // ─── REVEAL ON SCROLL ───
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+    reveals.forEach(el => observer.observe(el));
+
+    // ─── CONTACT FORM ───
+    function handleSubmit() {
+      const name  = document.getElementById('f-name').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const btn   = document.getElementById('sbtn');
+
+      if (!name || !email) {
+        btn.classList.add('error');
+        btn.textContent = 'Please fill in your name and email.';
+        setTimeout(() => {
+          btn.classList.remove('error');
+          btn.textContent = 'Submit Brief →';
+        }, 2500);
+        return;
+      }
+
+      btn.classList.add('success');
+      btn.textContent = '✓ Brief Received — We\'ll be in touch within 24 hrs.';
+      btn.disabled = true;
+
+      ['f-name','f-email','f-brand','f-msg'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+
+      setTimeout(() => {
+        btn.classList.remove('success');
+        btn.textContent = 'Submit Brief →';
+        btn.disabled = false;
+      }, 5000);
+    }
+
+    // ─── SMOOTH ANCHOR LINKS ───
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href').slice(1);
+        const el = document.getElementById(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
